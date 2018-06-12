@@ -1,0 +1,47 @@
+Public Class AccountCRUDFLSCheckController {
+
+  Private Map <String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+  Private  List<Account> accountsList;
+  
+   
+  //Email__c and city__c are custom fields in Account Object
+  //Can skip relational field names from check.
+  
+  //Check for read access for objects and FLS on soql query
+  Public void fetchAccountRecords(){       
+        if(CRUD_FLS_CheckUtility.checkReadAccess(new List<String> { 'Name','Email__c', 'City__c' }) && Schema.sObjectType.Account.isAccessible(),schemaMap.get('Account').getDescribe().fields.getMap()){
+           accountsList = [SELECT Name,Email__c,City__c FROM Account limit 10];
+        }
+  }
+  
+  //Check for create access for Objects and fields
+  Public void createAccount(){
+     
+      Account acc = new Account();
+      acc.Name = ''CRUD CHECK;
+      acc.Email__c = 'test@test.com';
+      acc.City__c = 'New York';
+      if(CRUD_FLS_CheckUtility.checkCreateAccess(new List<String> { 'Name','Email__c', 'City__c' }) && Schema.sObjectType.Account.isCreateable(),schemaMap.get('Account').getDescribe().fields.getMap()){    
+          insert acc;
+      }
+  }
+  
+  //Check for update access for Objects and fields
+  Public void updateAccount(){
+      if(CRUD_FLS_CheckUtility.checkUpdateAccess(new List<String> {'City__c' }) && Schema.sObjectType.Account.isUpdateable(),schemaMap.get('Account').getDescribe().fields.getMap()){
+          for(Account acc : accountsList){
+            acc.City__c = 'Dubai';
+          }
+          update accountsList;
+     } 
+  }
+  
+  //Check for delete Access for Objects and fields
+  //No FLS required .Delete access on object level check is enough to pass security review
+  Public void deleteAccount(){
+    if(CRUD_FLS_CheckUtility.checkDeleteAccess()){
+      delete accountsList;
+    }
+  }
+  
+}
