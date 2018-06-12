@@ -1,0 +1,36 @@
+public with sharing class CRUD_FLS_Check {
+
+    public static Boolean checkReadAccess(String [] fieldsToRead, Map<String,Schema.SObjectField> m) {
+        for (String toRead : fieldsToRead) {
+            // Check if the user has read access on the each field
+            if (!m.get(toRead).getDescribe().isAccessible()) {
+                return false;                                     
+            }
+        } 
+        return true;
+    }
+
+    public static Boolean checkCreateAccess(String [] fieldsToCreate, Map<String,Schema.SObjectField> m ){
+        for (String toCreate : fieldsToCreate) {
+            // Check if the user has create access on the each field          
+            if (!m.get(toCreate).getDescribe().isCreateable()) {  
+                return false;                                     
+            }
+        } 
+        return true;
+    }
+    
+    public static Boolean checkUpdateAccess(String [] fieldsToUpdate, Map<String,Schema.SObjectField> m ){
+        for (String toUpdate : fieldsToUpdate) {
+            // Check if the user has update access on the each field            
+            if (!m.get(toUpdate).getDescribe().isUpdateable()) {
+                return false;                                     
+            }
+        } 
+        return true;
+    }         
+
+    public static Boolean checkDeleteAccess(Schema.DescribeSObjectResult m){
+        return m.isDeletable();
+    }         
+}
