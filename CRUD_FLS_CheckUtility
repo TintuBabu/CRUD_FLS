@@ -1,4 +1,4 @@
-public with sharing class CRUD_FLS_Check {
+public with sharing class CRUD_FLS_CheckUtility {
 
     public static Boolean checkReadAccess(String [] fieldsToRead, Map<String,Schema.SObjectField> m) {
         for (String toRead : fieldsToRead) {
